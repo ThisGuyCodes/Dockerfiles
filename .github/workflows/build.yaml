@@ -136,6 +136,9 @@ jobs:
           set -x
 
           tag_args=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref_name }}" == "main" ]]; then
+            tag_args="${tag_args} -t ${{ toJSON(env.DOCKER_ORG) }}/${{ toJSON(matrix.image) }}:latest"
+          fi
           images=$(printf '${{ env.DOCKER_ORG }}/${{ matrix.image }}@sha256:%s ' *)
           docker buildx imagetools create $tag_args $images
       - name: Inspect image
