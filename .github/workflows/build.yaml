@@ -45,10 +45,10 @@ jobs:
         platform:
           # - platform_dunder: linux_arm64
           #   qemu: false
-          #   runner: ubuntu-latest
+          #   runner: ubuntu-24.04-arm
           - platform_dunder: linux_amd64
             qemu: false
-            runner: ubuntu-24.04-arm
+            runner: ubuntu-latest
     steps:
       - name: Generate platform_slash
         id: gen_slash
