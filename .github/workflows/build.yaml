@@ -76,7 +76,7 @@ jobs:
           context: dockerfiles/${{ matrix.image }}
           file: dockerfiles/${{ matrix.image }}/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
-          # tags: thisguy/${{ matrix.image }}
+          tags: thisguy/${{ matrix.image }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
       - name: Export digest
         run: |
