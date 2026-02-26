@@ -48,9 +48,9 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.list.outputs.images) }}
         platform:
-          # - platform_dunder: linux_arm64
-          #   qemu: false
-          #   runner: ubuntu-24.04-arm
+          - platform_dunder: linux_arm64
+            qemu: false
+            runner: ubuntu-24.04-arm
           - platform_dunder: linux_amd64
             qemu: false
             runner: ubuntu-latest
