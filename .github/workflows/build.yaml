@@ -2,9 +2,17 @@
 name: Build and Push Docker Images
 on:
   workflow_call:
+    inputs:
+      tag:
+        description: "Tag for the Docker image"
+        required: true
+        type: string
   push:
     branches:
       - main
+
+env:
+  DOCKER_TAG: ${{ ((github.event_name == 'push' && github.ref_name == 'main') && 'latest') || inputs.tag }}
 
 jobs:
   list:
@@ -49,5 +57,5 @@ jobs:
           context: dockerfiles/${{ matrix.image }}
           file: dockerfiles/${{ matrix.image }}/Dockerfile
           push: true
-          tags: thisguy/${{ matrix.image }}:latest
+          tags: thisguy/${{ matrix.image }}:${{ env.DOCKER_TAG }}
           platforms: ${{ matrix.platform.platform }}
