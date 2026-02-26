@@ -142,4 +142,4 @@ jobs:
         run: |
           set -x
 
-          docker buildx imagetools inspect ${{ matrix.image }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ toJSON(env.DOCKER_ORG) }}/${{ toJSON(matrix.image) }}:${{ steps.meta.outputs.version }}
