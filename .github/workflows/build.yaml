@@ -7,6 +7,10 @@ on:
         description: "Tag for the Docker image"
         required: true
         type: string
+      org:
+        description: "Username/org for the Docker images"
+        required: true
+        type: string
   push:
     branches:
       - main
@@ -19,6 +23,7 @@ concurrency:
 
 env:
   DOCKER_TAG: ${{ ((github.event_name == 'push' && github.ref_name == 'main') && 'latest') || inputs.tag }}
+  DOCKER_ORG: ${{ ((github.event_name == 'push' && github.ref_name == 'main') && 'thisguy') || inputs.org }}
 
 jobs:
   list:
@@ -81,7 +86,7 @@ jobs:
           context: dockerfiles/${{ matrix.image }}
           file: dockerfiles/${{ matrix.image }}/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
-          tags: thisguy/${{ matrix.image }}
+          tags: ${{ env.DOCKER_ORG }}/${{ matrix.image }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
       - name: Export digest
         run: |
@@ -124,14 +129,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ matrix.image }}
+          images: ${{ env.DOCKER_ORG }}/${{ matrix.image }}
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
           set -x
 
           tag_args=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
-          images=$(printf 'thisguy/${{ matrix.image }}@sha256:%s ' *)
+          images=$(printf '${{ env.DOCKER_ORG }}/${{ matrix.image }}@sha256:%s ' *)
           docker buildx imagetools create $tag_args $images
       - name: Inspect image
         run: |
