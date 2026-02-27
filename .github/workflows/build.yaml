@@ -22,8 +22,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DOCKER_TAG: ${{ ((github.event_name == 'push' && github.ref_name == 'main') && 'latest') || inputs.tag }}
   DOCKER_ORG: ${{ ((github.event_name == 'push' && github.ref_name == 'main') && 'thisguy') || inputs.org }}
+  ALSO_LATEST: ${{ toJSON((github.event_name == 'push' || github.event_name == 'schedule') && github.ref_name == 'main') }}
 
 jobs:
   list:
@@ -136,7 +136,7 @@ jobs:
           set -x
 
           tag_args=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref_name }}" == "main" ]]; then
+          if [[ "${{ env.ALSO_LATEST }}" == "true" ]]; then
             tag_args="${tag_args} -t ${{ toJSON(env.DOCKER_ORG) }}/${{ toJSON(matrix.image) }}:latest"
           fi
           images=$(printf '${{ env.DOCKER_ORG }}/${{ matrix.image }}@sha256:%s ' *)
