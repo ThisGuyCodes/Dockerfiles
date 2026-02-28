@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DOCKER_ORG: ${{ ((github.event_name == 'push' && github.ref_name == 'main') && 'thisguy') || inputs.org }}
+  DOCKER_ORG: thisguy
   ALSO_LATEST: ${{ toJSON((github.event_name == 'push' || github.event_name == 'schedule') && github.ref_name == 'main') }}
 
 jobs:
